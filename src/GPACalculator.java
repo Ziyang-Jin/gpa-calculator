@@ -38,7 +38,7 @@ public class GPACalculator {
     public double calculateGPA() {
         double totalGrades = getTotalGrades();
         int totalCredits = getTotalCredits();
-        return totalGrades / totalCredits * scale;
+        return totalCredits != 0 ? totalGrades / totalCredits * scale : 0;
     }
 
     private int getTotalCredits() {

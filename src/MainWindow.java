@@ -15,14 +15,19 @@ import java.awt.event.MouseAdapter;
 import java.awt.Font;
 
 public class MainWindow {
-
-	private JFrame frame;
-	private JTable table;
-	private ButtonGroup scaleGroup;
-	private JLabel scaleLabel;
-	private JLabel labelResult;
-	private JTextArea textArea;
 	private GPACalculator gpaCalculator;
+	private JFrame frame;
+	// top part
+	private JLabel lblDialog;
+	private JTextArea lblText;
+	// left part
+	private JTable table;
+	// right part
+	private ButtonGroup scaleGroup;
+	// bottom part
+	private JLabel lblScale;
+	private JLabel lblResult;
+	private static final String DEFAULT_LBL_RESULT = "0.0";
 
 	/**
 	 * Launch the application.
@@ -54,32 +59,88 @@ public class MainWindow {
 		gpaCalculator = new GPACalculator();
 		initJFrame();
 		initTopPart();
-		initTable();
+		initLeftPart();
 		initRightPart();
 		initBottomPart();
 	}
 	
 	private void initJFrame() {
-		frame = new JFrame();
+		final String TITLE = "UBC GPA Calculator";
+		frame = new JFrame(TITLE);
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 	}
 	
 	private void initTopPart() {
-		JLabel lblExample = new JLabel("e.g. ECON101, 100, 3.0");
-		lblExample.setBounds(50, 20, 180, 20);
-		frame.getContentPane().add(lblExample);
+		initDialog();	
+		initTextInput();
+		initCreateBtn();
+		initDeleteBtn();
+	}
+	
+	private void initLeftPart() {
+		String[] columnNames = {"Course", "Grade", "Credits"};
+		Object[][] data = null;
+		DefaultTableModel model = new DefaultTableModel(data, columnNames);
+		table = new JTable(model);
+		table.setFont(new Font("Monaco", Font.PLAIN, 12));
+		table.setBounds(50, 80, 240, 150);
+		frame.getContentPane().add(table);
+	}
+	
+	private void initRightPart() {
+		initHeader();
+		initRadioButtons();
+		initCalculate();
+	}
+	
+	private void initBottomPart() {
+		JLabel lblGpa = new JLabel("GPA:");
+		lblGpa.setBounds(50, 240, 60, 20);
+		frame.getContentPane().add(lblGpa);
 		
-		textArea = new JTextArea();
-		textArea.setBounds(50, 50, 180, 20);
-		frame.getContentPane().add(textArea);
+		final String INIT_RESULT = "0.0";
+		lblResult = new JLabel(INIT_RESULT);
+		lblResult.setBounds(110, 240, 60, 20);
+		frame.getContentPane().add(lblResult);
 		
+		JLabel lblSeparator = new JLabel(" /    ");
+		lblSeparator.setBounds(170, 240, 60, 20);
+		frame.getContentPane().add(lblSeparator);
+		
+		lblScale = new JLabel("100");
+		lblScale.setBounds(230, 240, 60, 20);
+		frame.getContentPane().add(lblScale);
+	}
+	
+	// START --> TOP PART
+	private void initDialog() {
+		final String WELCOME = "Please create course records:";
+		lblDialog = new JLabel(WELCOME);
+		lblDialog.setBounds(50, 20, 185, 20);
+		frame.getContentPane().add(lblDialog);
+	}
+	
+	private void initTextInput() {
+		lblText = new JTextArea();
+		lblText.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				final String EXAMPLE = "Example: CPSC121, 80, 4.0";
+				lblDialog.setText(EXAMPLE);
+			}
+		});
+		lblText.setBounds(50, 50, 185, 20);
+		frame.getContentPane().add(lblText);
+	}
+	
+	private void initCreateBtn() {
 		JButton btnCreate = new JButton("create");
 		btnCreate.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				String s = textArea.getText();
+				String s = lblText.getText();
 				String[] rowDataRaw = s.split(",");
 				String[] rowData = {"", "", ""};
 				String courseID = rowDataRaw[0].trim();
@@ -97,7 +158,9 @@ public class MainWindow {
 		});
 		btnCreate.setBounds(240, 45, 80, 30);
 		frame.getContentPane().add(btnCreate);
-		
+	}
+	
+	private void initDeleteBtn() {
 		JButton btnDelete = new JButton("delete");
 		btnDelete.addMouseListener(new MouseAdapter() {
 			@Override
@@ -112,13 +175,9 @@ public class MainWindow {
 		btnDelete.setBounds(320, 45, 80, 30);
 		frame.getContentPane().add(btnDelete);
 	}
+	// END --> TOP PART
 	
-	private void initRightPart() {
-		initHeader();
-		initRadioButtons();
-		initCalculate();
-	}
-	
+	// START --> RIGHT PART
 	private void initHeader() {
 		JLabel lblGpaScale = new JLabel("GPA Scale");
 		lblGpaScale.setBounds(320, 80, 80, 30);
@@ -127,61 +186,74 @@ public class MainWindow {
 	
 	private void initRadioButtons() {
 		scaleGroup = new ButtonGroup();
-		JRadioButton radioButton_1 = new JRadioButton("100", true);
-		radioButton_1.addMouseListener(new MouseAdapter() {
+		initRadioBtn100();
+		initRadioBtn50();
+		initRadioBtn433();
+		initRadioBtn40();
+	}
+	
+	private void initRadioBtn100() {
+		JRadioButton radioBtn100 = new JRadioButton("100", true);
+		radioBtn100.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				scaleGroup.setSelected(radioButton_1.getModel(), true);
-				scaleLabel.setText("100");
+				scaleGroup.setSelected(radioBtn100.getModel(), true);
+				lblScale.setText("100");
 				gpaCalculator.setScale(100.0);
-				labelResult.setText("???");
+				lblResult.setText(DEFAULT_LBL_RESULT);
 			}
 		});
-		radioButton_1.setBounds(320, 110, 80, 30);
-		frame.getContentPane().add(radioButton_1);
-		scaleGroup.add(radioButton_1);
-		
-		JRadioButton radioButton_2 = new JRadioButton("5.0", false);
-		radioButton_2.addMouseListener(new MouseAdapter() {
+		radioBtn100.setBounds(320, 110, 80, 30);
+		frame.getContentPane().add(radioBtn100);
+		scaleGroup.add(radioBtn100);
+	}
+	
+	private void initRadioBtn50() {
+		JRadioButton radioBtn50 = new JRadioButton("5.0", false);
+		radioBtn50.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				scaleGroup.setSelected(radioButton_2.getModel(), true);
-				scaleLabel.setText("5.0");
+				scaleGroup.setSelected(radioBtn50.getModel(), true);
+				lblScale.setText("5.0");
 				gpaCalculator.setScale(5.0);
-				labelResult.setText("???");
+				lblResult.setText(DEFAULT_LBL_RESULT);
 			}
 		});
-		radioButton_2.setBounds(320, 140, 80, 30);
-		frame.getContentPane().add(radioButton_2);
-		scaleGroup.add(radioButton_2);
-		
-		JRadioButton radioButton_3 = new JRadioButton("4.33", false);
-		radioButton_3.addMouseListener(new MouseAdapter() {
+		radioBtn50.setBounds(320, 140, 80, 30);
+		frame.getContentPane().add(radioBtn50);
+		scaleGroup.add(radioBtn50);
+	}
+	
+	private void initRadioBtn433() {
+		JRadioButton radioBtn433 = new JRadioButton("4.33", false);
+		radioBtn433.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				scaleGroup.setSelected(radioButton_3.getModel(), true);
-				scaleLabel.setText("4.33");
+				scaleGroup.setSelected(radioBtn433.getModel(), true);
+				lblScale.setText("4.33");
 				gpaCalculator.setScale(4.33);
-				labelResult.setText("???");
+				lblResult.setText(DEFAULT_LBL_RESULT);
 			}
 		});
-		radioButton_3.setBounds(320, 170, 80, 30);
-		frame.getContentPane().add(radioButton_3);
-		scaleGroup.add(radioButton_3);
-		
-		JRadioButton radioButton_4 = new JRadioButton("4.0", false);
-		radioButton_4.addMouseListener(new MouseAdapter() {
+		radioBtn433.setBounds(320, 170, 80, 30);
+		frame.getContentPane().add(radioBtn433);
+		scaleGroup.add(radioBtn433);
+	}
+	
+	private void initRadioBtn40() {
+		JRadioButton radioBtn40 = new JRadioButton("4.0", false);
+		radioBtn40.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				scaleGroup.setSelected(radioButton_4.getModel(), true);
-				scaleLabel.setText("4.0");
+				scaleGroup.setSelected(radioBtn40.getModel(), true);
+				lblScale.setText("4.0");
 				gpaCalculator.setScale(4.0);
-				labelResult.setText("???");
+				lblResult.setText(DEFAULT_LBL_RESULT);
 			}
 		});
-		radioButton_4.setBounds(320, 200, 80, 30);
-		frame.getContentPane().add(radioButton_4);
-		scaleGroup.add(radioButton_4);
+		radioBtn40.setBounds(320, 200, 80, 30);
+		frame.getContentPane().add(radioBtn40);
+		scaleGroup.add(radioBtn40);
 	}
 	
 	private void initCalculate() {
@@ -191,13 +263,15 @@ public class MainWindow {
 			public void mouseClicked(MouseEvent e) {
 				createCourses();
 				double gpa = gpaCalculator.calculateGPA();
-				labelResult.setText(String.format("%.1f", gpa));
+				lblResult.setText(String.format("%.1f", gpa));
 			}
 		});
 		btnCalculate.setBounds(320, 235, 80, 30);
 		frame.getContentPane().add(btnCalculate);
 	}
+	// END --> RIGHT PART
 	
+	// HELPER FUNCTIONS
 	private void createCourses() {
 		DefaultTableModel model = (DefaultTableModel) table.getModel();
 		int rowCount = model.getRowCount();
@@ -215,33 +289,4 @@ public class MainWindow {
 		double credits = Double.parseDouble(rowData.get(2));
 		return new Course(courseID, grade, credits);
 	}
-	
-	private void initTable() {
-		String[] columnNames = {"Course", "Grade", "Credits"};
-		Object[][] data = null;
-		DefaultTableModel model = new DefaultTableModel(data, columnNames);
-		table = new JTable(model);
-		table.setFont(new Font("Monaco", Font.PLAIN, 12));
-		table.setBounds(50, 80, 240, 150);
-		frame.getContentPane().add(table);
-	}
-	
-	private void initBottomPart() {
-		JLabel lblGpa = new JLabel("GPA:");
-		lblGpa.setBounds(50, 240, 60, 20);
-		frame.getContentPane().add(lblGpa);
-		
-		labelResult = new JLabel("???");
-		labelResult.setBounds(110, 240, 60, 20);
-		frame.getContentPane().add(labelResult);
-		
-		JLabel labelSeparator = new JLabel(" /    ");
-		labelSeparator.setBounds(170, 240, 60, 20);
-		frame.getContentPane().add(labelSeparator);
-		
-		scaleLabel = new JLabel("100");
-		scaleLabel.setBounds(230, 240, 60, 20);
-		frame.getContentPane().add(scaleLabel);
-	}
-	
 }
