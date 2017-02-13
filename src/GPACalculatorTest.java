@@ -47,7 +47,13 @@ public class GPACalculatorTest {
 	@Test
 	public void test() {
 		System.out.println(gpaCalculator.calculateGPA());
+		gpaCalculator.setScale(100);
+		System.out.println(gpaCalculator.calculateGPA());
 		gpaCalculator.setScale(4.0);
+		System.out.println(gpaCalculator.calculateGPA());
+		gpaCalculator.setScale(GPACalculator.SCALE40L);
+		System.out.println(gpaCalculator.calculateGPA());
+		gpaCalculator.setScale(4.33);
 		System.out.println(gpaCalculator.calculateGPA());
 	}
 	

@@ -180,15 +180,15 @@ public class MainWindow {
 	// START --> RIGHT PART
 	private void initHeader() {
 		JLabel lblGpaScale = new JLabel("GPA Scale");
-		lblGpaScale.setBounds(320, 80, 80, 30);
+		lblGpaScale.setBounds(320, 80, 100, 30);
 		frame.getContentPane().add(lblGpaScale);
 	}
 	
 	private void initRadioButtons() {
 		scaleGroup = new ButtonGroup();
 		initRadioBtn100();
-		initRadioBtn50();
 		initRadioBtn433();
+		initRadioBtn40L();
 		initRadioBtn40();
 	}
 	
@@ -199,29 +199,29 @@ public class MainWindow {
 			public void mouseClicked(MouseEvent e) {
 				scaleGroup.setSelected(radioBtn100.getModel(), true);
 				lblScale.setText("100");
-				gpaCalculator.setScale(100.0);
+				gpaCalculator.setScale(GPACalculator.DEFAULT_SCALE);
 				lblResult.setText(DEFAULT_LBL_RESULT);
 			}
 		});
-		radioBtn100.setBounds(320, 110, 80, 30);
+		radioBtn100.setBounds(320, 110, 100, 30);
 		frame.getContentPane().add(radioBtn100);
 		scaleGroup.add(radioBtn100);
 	}
 	
-	private void initRadioBtn50() {
-		JRadioButton radioBtn50 = new JRadioButton("5.0", false);
-		radioBtn50.addMouseListener(new MouseAdapter() {
+	private void initRadioBtn40L() {
+		JRadioButton radioBtn40L = new JRadioButton("4.0 (Letter)", false);
+		radioBtn40L.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				scaleGroup.setSelected(radioBtn50.getModel(), true);
-				lblScale.setText("5.0");
-				gpaCalculator.setScale(5.0);
+				scaleGroup.setSelected(radioBtn40L.getModel(), true);
+				lblScale.setText("4.0");
+				gpaCalculator.setScale(GPACalculator.SCALE40L);
 				lblResult.setText(DEFAULT_LBL_RESULT);
 			}
 		});
-		radioBtn50.setBounds(320, 140, 80, 30);
-		frame.getContentPane().add(radioBtn50);
-		scaleGroup.add(radioBtn50);
+		radioBtn40L.setBounds(320, 170, 100, 30);
+		frame.getContentPane().add(radioBtn40L);
+		scaleGroup.add(radioBtn40L);
 	}
 	
 	private void initRadioBtn433() {
@@ -231,27 +231,27 @@ public class MainWindow {
 			public void mouseClicked(MouseEvent e) {
 				scaleGroup.setSelected(radioBtn433.getModel(), true);
 				lblScale.setText("4.33");
-				gpaCalculator.setScale(4.33);
+				gpaCalculator.setScale(GPACalculator.SCALE433);
 				lblResult.setText(DEFAULT_LBL_RESULT);
 			}
 		});
-		radioBtn433.setBounds(320, 170, 80, 30);
+		radioBtn433.setBounds(320, 140, 100, 30);
 		frame.getContentPane().add(radioBtn433);
 		scaleGroup.add(radioBtn433);
 	}
 	
 	private void initRadioBtn40() {
-		JRadioButton radioBtn40 = new JRadioButton("4.0", false);
+		JRadioButton radioBtn40 = new JRadioButton("4.0 (Grade)", false);
 		radioBtn40.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				scaleGroup.setSelected(radioBtn40.getModel(), true);
 				lblScale.setText("4.0");
-				gpaCalculator.setScale(4.0);
+				gpaCalculator.setScale(GPACalculator.SCALE40);
 				lblResult.setText(DEFAULT_LBL_RESULT);
 			}
 		});
-		radioBtn40.setBounds(320, 200, 80, 30);
+		radioBtn40.setBounds(320, 200, 100, 30);
 		frame.getContentPane().add(radioBtn40);
 		scaleGroup.add(radioBtn40);
 	}
@@ -266,7 +266,7 @@ public class MainWindow {
 				lblResult.setText(String.format("%.1f", gpa));
 			}
 		});
-		btnCalculate.setBounds(320, 235, 80, 30);
+		btnCalculate.setBounds(320, 235, 100, 30);
 		frame.getContentPane().add(btnCalculate);
 	}
 	// END --> RIGHT PART
