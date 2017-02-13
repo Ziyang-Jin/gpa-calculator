@@ -1,5 +1,6 @@
 import java.awt.EventQueue;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.JTable;
@@ -23,8 +24,10 @@ public class MainWindow {
 	private JFrame frame;
 	private JTable table;
 	private ButtonGroup scaleGroup;
-	JLabel scaleLabel;
-	JTextArea textArea;
+	private JLabel scaleLabel;
+	private JLabel labelResult;
+	private JTextArea textArea;
+	private GPACalculator gpaCalculator;
 
 	/**
 	 * Launch the application.
@@ -53,6 +56,7 @@ public class MainWindow {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		gpaCalculator = new GPACalculator();
 		initJFrame();
 		initTopPart();
 		initTable();
@@ -72,18 +76,36 @@ public class MainWindow {
 		textArea.setBounds(51, 16, 165, 16);
 		frame.getContentPane().add(textArea);
 		
-		JButton btnUpdateTable = new JButton("update");
-		btnUpdateTable.addMouseListener(new MouseAdapter() {
+		JButton btnCreate = new JButton("create");
+		btnCreate.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				String s = textArea.getText();
-				String[] rowData = s.split(",");
+				String[] rowDataRaw = s.split(",");
+				String[] rowData = {"", "", ""};
+				for (int i = 0; i < table.getColumnCount(); i++) {
+					rowData[i] = rowDataRaw[i].trim();
+				}
 				DefaultTableModel model = (DefaultTableModel) table.getModel();
 				model.addRow(rowData);
 			}
 		});
-		btnUpdateTable.setBounds(222, 11, 87, 29);
-		frame.getContentPane().add(btnUpdateTable);
+		btnCreate.setBounds(222, 11, 76, 29);
+		frame.getContentPane().add(btnCreate);
+		
+		JButton btnDelete = new JButton("delete");
+		btnDelete.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int[] selectedRows = table.getSelectedRows();
+				DefaultTableModel model = (DefaultTableModel) table.getModel();
+				for (int i = 0; i < selectedRows.length; i++) {
+					model.removeRow(selectedRows[i]);
+				}
+			}
+		});
+		btnDelete.setBounds(294, 11, 76, 29);
+		frame.getContentPane().add(btnDelete);
 	}
 	
 	private void initRightPart() {
@@ -106,6 +128,7 @@ public class MainWindow {
 			public void mouseClicked(MouseEvent e) {
 				scaleGroup.setSelected(radioButton_1.getModel(), true);
 				scaleLabel.setText("100");
+				gpaCalculator.setScale(100.0);
 			}
 		});
 		radioButton_1.setBounds(325, 67, 141, 23);
@@ -118,6 +141,7 @@ public class MainWindow {
 			public void mouseClicked(MouseEvent e) {
 				scaleGroup.setSelected(radioButton_2.getModel(), true);
 				scaleLabel.setText("5.0");
+				gpaCalculator.setScale(5.0);
 			}
 		});
 		radioButton_2.setBounds(325, 102, 141, 23);
@@ -130,6 +154,7 @@ public class MainWindow {
 			public void mouseClicked(MouseEvent e) {
 				scaleGroup.setSelected(radioButton_3.getModel(), true);
 				scaleLabel.setText("4.0");
+				gpaCalculator.setScale(4.0);
 			}
 		});
 		radioButton_3.setBounds(325, 137, 141, 23);
@@ -139,8 +164,34 @@ public class MainWindow {
 	
 	private void initCalculate() {
 		JButton btnCalculate = new JButton("calculate");
+		btnCalculate.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				createCourses();
+				double gpa = gpaCalculator.calculateGPA();
+				labelResult.setText(String.format("%.1f", gpa));
+			}
+		});
 		btnCalculate.setBounds(325, 172, 117, 29);
 		frame.getContentPane().add(btnCalculate);
+	}
+	
+	private void createCourses() {
+		DefaultTableModel model = (DefaultTableModel) table.getModel();
+		int rowCount = model.getRowCount();
+		Vector<Vector<String>> data = model.getDataVector();
+		for (int i = 0; i < rowCount; i++) {
+			Vector<String> rowData = data.get(i);
+			Course c = createCourse(rowData);
+			gpaCalculator.registerCourse(c);
+		}
+	}
+	
+	private Course createCourse(Vector<String> rowData) {
+		String courseID = rowData.get(0);
+		int grade = Integer.parseInt(rowData.get(1).trim());
+		double credits = Double.parseDouble(rowData.get(2).trim());
+		return new Course(courseID, grade, credits);
 	}
 	
 	private void initTable() {
@@ -159,7 +210,7 @@ public class MainWindow {
 		lblGpa.setBounds(51, 227, 50, 16);
 		frame.getContentPane().add(lblGpa);
 		
-		JLabel labelResult = new JLabel("3.0");
+		labelResult = new JLabel("3.0");
 		labelResult.setBounds(113, 227, 47, 16);
 		frame.getContentPane().add(labelResult);
 		
