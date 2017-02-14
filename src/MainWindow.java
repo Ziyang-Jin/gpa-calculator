@@ -327,12 +327,13 @@ public class MainWindow {
 		btnCalculate.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				gpaCalculator.clearCourses();
 				createCourses();
 				double gpa = gpaCalculator.calculateGPA();
 				lblResult.setText(String.format("%.1f", gpa));
 			}
 		});
-		btnCalculate.setBounds(320, 245, 100, 30);
+		btnCalculate.setBounds(320, 240, 100, 30);
 		frame.getContentPane().add(btnCalculate);
 	}
 	// END --> BOTTOM PART
@@ -341,6 +342,7 @@ public class MainWindow {
 	private void createCourses() {
 		DefaultTableModel model = (DefaultTableModel) table.getModel();
 		int rowCount = model.getRowCount();
+		@SuppressWarnings("unchecked")
 		Vector<Vector<String>> data = model.getDataVector();
 		for (int i = 0; i < rowCount; i++) {
 			Vector<String> rowData = data.get(i);

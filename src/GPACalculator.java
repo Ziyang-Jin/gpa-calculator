@@ -69,6 +69,10 @@ public class GPACalculator {
     	courses.add(c);
     }
     
+    public void clearCourses() {
+    	courses.clear();
+    }
+    
     public void registerCourses(ArrayList<Course> courses) {
     	this.courses = courses;
     }
