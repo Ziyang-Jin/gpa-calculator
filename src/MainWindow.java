@@ -111,6 +111,7 @@ public class MainWindow {
 	
 	private void initTextInput() {
 		lblText = new JTextField();
+		lblText.setToolTipText("Input your text here");
 		lblText.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
 		lblText.addFocusListener(new FocusAdapter() {
 			@Override
@@ -142,7 +143,7 @@ public class MainWindow {
 						DefaultTableModel model = (DefaultTableModel) table.getModel();
 						model.addRow(rowData);
 					} else {
-						System.out.println("invalid input");
+						lblDialog.setText("invalid input");
 					}
 				}
 			}
@@ -176,6 +177,12 @@ public class MainWindow {
 		Object[][] data = null;
 		DefaultTableModel model = new DefaultTableModel(data, columnNames);
 		table = new JTable(model);
+		table.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				lblDialog.setText("Edit your records in the table");
+			}
+		});
 		table.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
 		
 		JScrollPane jsp = new JScrollPane(table, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -202,6 +209,7 @@ public class MainWindow {
 	
 	private void initRadioBtn100() {
 		JRadioButton radioBtn100 = new JRadioButton("100", true);
+		radioBtn100.setToolTipText("GPA calculation based on a scale of 100");
 		radioBtn100.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
 		radioBtn100.addMouseListener(new MouseAdapter() {
 			@Override
@@ -219,6 +227,7 @@ public class MainWindow {
 	
 	private void initRadioBtn40L() {
 		JRadioButton radioBtn40L = new JRadioButton("4.0 (Letter)", false);
+		radioBtn40L.setToolTipText("GPA calculation based on your letter grade");
 		radioBtn40L.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
 		radioBtn40L.addMouseListener(new MouseAdapter() {
 			@Override
@@ -236,6 +245,7 @@ public class MainWindow {
 	
 	private void initRadioBtn433() {
 		JRadioButton radioBtn433 = new JRadioButton("4.33", false);
+		radioBtn433.setToolTipText("GPA Calculation based on a scale of 4.33");
 		radioBtn433.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
 		radioBtn433.addMouseListener(new MouseAdapter() {
 			@Override
@@ -253,6 +263,7 @@ public class MainWindow {
 	
 	private void initRadioBtn40() {
 		JRadioButton radioBtn40 = new JRadioButton("4.0 (Grade)", false);
+		radioBtn40.setToolTipText("GPA calculation based on a scale of 4.0");
 		radioBtn40.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
 		radioBtn40.addMouseListener(new MouseAdapter() {
 			@Override
@@ -303,6 +314,7 @@ public class MainWindow {
 	
 	private void initLblScale() {
 		lblScale = new JLabel("100");
+		lblScale.setToolTipText("The chosen GPA scale");
 		lblScale.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
 		lblScale.setBounds(230, 250, 60, 20);
 		frame.getContentPane().add(lblScale);

@@ -5,6 +5,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class GPACalculatorTest {
+	private static final String TESTMSG = "Test GPA on a scale of ";
+	private static final String FAILMSG = "GPA calculation is wrong";
 	private static GPACalculator gpaCalculator;
 	
 	@BeforeClass
@@ -45,21 +47,60 @@ public class GPACalculatorTest {
 	}
 
 	@Test
-	public void test() {
-		System.out.println(gpaCalculator.calculateGPA());
-		gpaCalculator.setScale(100);
-		System.out.println(gpaCalculator.calculateGPA());
-		gpaCalculator.setScale(4.0);
-		System.out.println(gpaCalculator.calculateGPA());
+	public void testDefaultScale() {
+		System.out.println("Test default scale: " + GPACalculator.DEFAULT_SCALE);
+		calculateGPAAndPrint();
+	}
+	
+	@Test
+	public void testScale100() {
+		System.out.println(TESTMSG + "100");
+		gpaCalculator.setScale(GPACalculator.SCALE100);
+		double gpa = calculateGPAAndPrint();
+		if (gpa < 86.25 || gpa >= 86.35) {
+			fail(FAILMSG + "(Scale100)");
+		}
+	}
+	
+	@Test
+	public void testScale433() {
+		System.out.println(TESTMSG + "4.33");
+		gpaCalculator.setScale(GPACalculator.SCALE433);
+		double gpa = calculateGPAAndPrint();
+		if (gpa < 3.95 || gpa >= 4.05) {
+			fail(FAILMSG + "(Scale4.33)");
+		}
+	}
+	
+	@Test
+	public void testScale40L() {
+		System.out.println(TESTMSG + "4.0(Letter)");
 		gpaCalculator.setScale(GPACalculator.SCALE40L);
-		System.out.println(gpaCalculator.calculateGPA());
-		gpaCalculator.setScale(4.33);
-		System.out.println(gpaCalculator.calculateGPA());
+		double gpa = calculateGPAAndPrint();
+		if (gpa < 3.75 || gpa >= 3.85) {
+			fail(FAILMSG + "(Scale4.0[letter])");
+		}
+	}
+	
+	@Test
+	public void testScale40() {
+		System.out.println(TESTMSG + "4.0(Grade)");
+		gpaCalculator.setScale(GPACalculator.SCALE40);
+		double gpa = calculateGPAAndPrint();
+		if (gpa < 3.75 || gpa >= 3.85) {
+			fail(FAILMSG + "(Scale4.0[grade])");
+		}
 	}
 	
     @Test
-    public void test2() {
+    public void testOutPut() {
     	gpaCalculator.outputCoursesInfo();
+    }
+    
+    private double calculateGPAAndPrint() {
+		double gpa = gpaCalculator.calculateGPA();
+		System.out.println("GPA="+gpa);
+		return gpa;
     }
 
 }

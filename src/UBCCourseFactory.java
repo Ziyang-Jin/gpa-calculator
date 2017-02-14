@@ -9,7 +9,7 @@ public class UBCCourseFactory {
     	    courseDomain = validateCourseDomain(courseDomain);
     	    
     	    String courseNumber = courseID.substring(COURSE_DOMAIN_LENGTH).trim();
-    	    validateCourseNumber(courseNumber);
+    	    courseNumber = validateCourseNumber(courseNumber);
     	    
     	    courseID = courseDomain + ' ' + courseNumber;
     	}
@@ -26,10 +26,18 @@ public class UBCCourseFactory {
     	return courseDomain;
     }
     
-    private static void validateCourseNumber(String courseNumber) {
-    	if (courseNumber.compareTo("000") < 0 || courseNumber.compareTo("999") > 0) {
-    		msgInvalidCourseID("courseNumer=" + courseNumber);
+    private static String validateCourseNumber(String courseNumber) {
+    	String result = "";
+    	for (int i = 0; i < courseNumber.length(); i++) {
+    		char c = courseNumber.charAt(i);
+    		if (Character.isDigit(c)) {
+    			result = result + c;
+    		}
     	}
+    	if (result.compareTo("000") < 0 || result.compareTo("999") > 0) {
+    		msgInvalidCourseID("courseNumer=" + result);
+    	}
+    	return result;
     }
     
     private static void msgInvalidCourseID(String s) {
