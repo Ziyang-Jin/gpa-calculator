@@ -5,8 +5,8 @@ public class Course {
 
     public Course(String courseID, int grade, double credits) {
         this.courseID = courseID;
-	    this.grade = grade;
-	    this.credits = credits;
+        this.grade = grade;
+        this.credits = credits;
     }
 
     public String getCourseID() {
@@ -34,8 +34,8 @@ public class Course {
     }
     
     public String printCourseInfo() {
-    	String s = courseID + ", " + grade + ", " + credits;
-    	System.out.println(s);
-    	return s;
+        String s = courseID + ", " + grade + ", " + credits;
+        System.out.println(s);
+        return s;
     }
 }
