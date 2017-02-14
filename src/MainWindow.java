@@ -18,6 +18,7 @@ import javax.swing.ScrollPaneConstants;
 import java.awt.Color;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import javax.swing.SwingConstants;
 
 public class MainWindow {
 	private GPACalculator gpaCalculator = new GPACalculator();
@@ -125,7 +126,7 @@ public class MainWindow {
 			}
 		});
 		lblText.setBackground(Color.WHITE);
-		lblText.setBounds(36, 40, 200, 30);
+		lblText.setBounds(36, 40, 200, 26);
 		frame.getContentPane().add(lblText);
 	}
 	
@@ -143,12 +144,13 @@ public class MainWindow {
 						DefaultTableModel model = (DefaultTableModel) table.getModel();
 						model.addRow(rowData);
 					} else {
-						lblDialog.setText("invalid input");
+						final String INVALID_INPUT = "Oops, this input is invalid.";
+						lblDialog.setText(INVALID_INPUT);
 					}
 				}
 			}
 		});
-		btnCreate.setBounds(250, 40, 80, 30);
+		btnCreate.setBounds(250, 40, 68, 26);
 		frame.getContentPane().add(btnCreate);
 	}
 	
@@ -166,7 +168,7 @@ public class MainWindow {
 				}
 			}
 		});
-		btnDelete.setBounds(330, 40, 80, 30);
+		btnDelete.setBounds(310, 40, 68, 26);
 		frame.getContentPane().add(btnDelete);
 	}
 	// END --> TOP PART
@@ -177,6 +179,7 @@ public class MainWindow {
 		Object[][] data = null;
 		DefaultTableModel model = new DefaultTableModel(data, columnNames);
 		table = new JTable(model);
+		table.setBackground(new Color(255, 255, 255));
 		table.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {
@@ -193,9 +196,9 @@ public class MainWindow {
 	
 	// START --> RIGHT PART
 	private void initHeader() {
-		JLabel lblGpaScale = new JLabel("   GPA  Scale");
+		JLabel lblGpaScale = new JLabel("GPA  Scale");
 		lblGpaScale.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
-		lblGpaScale.setBounds(320, 80, 100, 30);
+		lblGpaScale.setBounds(325, 80, 65, 26);
 		frame.getContentPane().add(lblGpaScale);
 	}
 	
@@ -220,7 +223,7 @@ public class MainWindow {
 				lblResult.setText(DEFAULT_LBL_RESULT);
 			}
 		});
-		radioBtn100.setBounds(320, 110, 100, 30);
+		radioBtn100.setBounds(320, 106, 70, 24);
 		frame.getContentPane().add(radioBtn100);
 		scaleGroup.add(radioBtn100);
 	}
@@ -238,7 +241,7 @@ public class MainWindow {
 				lblResult.setText(DEFAULT_LBL_RESULT);
 			}
 		});
-		radioBtn40L.setBounds(320, 170, 100, 30);
+		radioBtn40L.setBounds(320, 154, 100, 24);
 		frame.getContentPane().add(radioBtn40L);
 		scaleGroup.add(radioBtn40L);
 	}
@@ -256,7 +259,7 @@ public class MainWindow {
 				lblResult.setText(DEFAULT_LBL_RESULT);
 			}
 		});
-		radioBtn433.setBounds(320, 140, 100, 30);
+		radioBtn433.setBounds(320, 130, 70, 24);
 		frame.getContentPane().add(radioBtn433);
 		scaleGroup.add(radioBtn433);
 	}
@@ -274,7 +277,7 @@ public class MainWindow {
 				lblResult.setText(DEFAULT_LBL_RESULT);
 			}
 		});
-		radioBtn40.setBounds(320, 200, 100, 30);
+		radioBtn40.setBounds(320, 178, 100, 24);
 		frame.getContentPane().add(radioBtn40);
 		scaleGroup.add(radioBtn40);
 	}
@@ -327,18 +330,24 @@ public class MainWindow {
 		btnCalculate.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				gpaCalculator.clearCourses();
+				clearCourses();
 				createCourses();
 				double gpa = gpaCalculator.calculateGPA();
-				lblResult.setText(String.format("%.1f", gpa));
+				renderResult(gpa);
 			}
 		});
-		btnCalculate.setBounds(320, 240, 100, 30);
+		btnCalculate.setBounds(320, 220, 78, 26);
 		frame.getContentPane().add(btnCalculate);
 	}
 	// END --> BOTTOM PART
 	
 	// HELPER FUNCTIONS
+	private void clearCourses() {
+		if (gpaCalculator.hasCourses()) {
+			gpaCalculator.clearCourses();
+		}
+	}
+	
 	private void createCourses() {
 		DefaultTableModel model = (DefaultTableModel) table.getModel();
 		int rowCount = model.getRowCount();
@@ -356,5 +365,13 @@ public class MainWindow {
 		int grade = Integer.parseInt(rowData.get(1));
 		double credits = Double.parseDouble(rowData.get(2));
 		return new Course(courseID, grade, credits);
+	}
+	
+	private void renderResult(double gpa) {
+		if (gpaCalculator.getScale() != GPACalculator.SCALE433) {
+		    lblResult.setText(String.format("%.1f", gpa));
+		} else {
+			lblResult.setText(String.format("%.2f", gpa));
+		}
 	}
 }

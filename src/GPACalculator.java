@@ -65,8 +65,16 @@ public class GPACalculator {
     	}
     }
     
+    public double getScale() {
+    	return scale;
+    }
+    
     public void registerCourse(Course c) {
     	courses.add(c);
+    }
+    
+    public boolean hasCourses() {
+    	return !courses.isEmpty();
     }
     
     public void clearCourses() {
@@ -170,5 +178,4 @@ public class GPACalculator {
     private double getSingleCourseGrade100(int grade) {
         return grade;
     }
-    
 }
