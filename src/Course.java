@@ -4,9 +4,9 @@ public class Course {
     private double credits;
 
     public Course(String courseID, int grade, double credits) {
-        this.courseID = UBCCourseFactory.validateCourseID(courseID);
-	    this.grade = UBCCourseFactory.validateGrade(grade);
-	    this.credits = UBCCourseFactory.validateCredits(credits);
+        this.courseID = courseID;
+	    this.grade = grade;
+	    this.credits = credits;
     }
 
     public String getCourseID() {
@@ -34,9 +34,6 @@ public class Course {
     }
     
     public String printCourseInfo() {
-    	String courseIDPart = "courseID: " + courseID;
-        String yourGradePart = "your grade: " + grade;
-    	String creditsPart = "credits: " + credits;
     	String s = courseID + ", " + grade + ", " + credits;
     	System.out.println(s);
     	return s;

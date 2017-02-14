@@ -1,32 +1,35 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class GPACalculator {
-	public static final double DEFAULT_SCALE = 100;
+	public static final double SCALE100 = 100.0;
 	public static final double SCALE433 = 4.33;
 	public static final double SCALE40 = 4.0;
 	public static final double SCALE40L = 4.1;
-	private static ArrayList<Double> supportedScales;
-    private ArrayList<Course> courses;
+	public static final double DEFAULT_SCALE = SCALE100;
+	private static HashSet<Double> supportedScales;
+    private static HashMap<Integer, Double> gpaMap433;
     private double scale;
-    private HashMap<Integer, Double> gpaMap433;
+    private ArrayList<Course> courses;
 
     public GPACalculator() {
-        courses = new ArrayList<Course>();
-        scale = DEFAULT_SCALE;
-        initGpaMap();
-        initSupportedScales();
+        this(DEFAULT_SCALE);
+    }
+    
+    public GPACalculator(double scale) {
+    	this(new ArrayList<Course>(), scale);
     }
 
     public GPACalculator(ArrayList<Course> courses, double scale) {
+	    initSupportedScales();
+	    initGpaMap();
         this.courses = courses;
 	    this.scale = scale;
-	    initGpaMap();
-	    initSupportedScales();
     }
     
     private void initSupportedScales() {
-    	supportedScales = new ArrayList<Double>();
+    	supportedScales = new HashSet<Double>();
     	supportedScales.add(DEFAULT_SCALE);
     	supportedScales.add(SCALE433);
     	supportedScales.add(SCALE40);
@@ -42,16 +45,15 @@ public class GPACalculator {
     	for (int i = 0; i <= 5; i++) {
     		gpaMap433.put(86 - i, 4.00 - i * 0.05);
     	}
-    	for (int j = 0; j <= 7; j++) {
-    		gpaMap433.put(80 - j, 3.70 - j * 0.10);
+    	for (int i = 0; i <= 7; i++) {
+    		gpaMap433.put(80 - i, 3.70 - i * 0.10);
     	}
     	gpaMap433.put(72, 2.95);
     	gpaMap433.put(71, 2.90);
     	gpaMap433.put(70, 2.80);
-    	gpaMap433.put(69, 2.70);
-    	gpaMap433.put(68, 2.65);
-    	gpaMap433.put(67, 2.60);
-    	gpaMap433.put(66, 2.55);
+    	for (int i = 0; i <= 3; i++) {
+    		gpaMap433.put(69 - i, 2.70 - i * 0.05);
+    	}
     	for (int i = 0; i <= 15; i++) {
     		gpaMap433.put(65 - i, 2.50 - i * 0.10);
     	}
