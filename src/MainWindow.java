@@ -3,23 +3,32 @@ import java.util.Vector;
 import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableModel;
 
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.Font;
+import javax.swing.JScrollBar;
+import javax.swing.ScrollPaneConstants;
+import java.awt.Color;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 public class MainWindow {
 	private GPACalculator gpaCalculator;
 	private JFrame frame;
 	// top part
+	private static final String WELCOME = "Enter your course, grade, credits below";
 	private JLabel lblDialog;
-	private JTextArea lblText;
+	private JTextField lblText;
 	// left part
 	private JTable table;
 	// right part
@@ -79,14 +88,16 @@ public class MainWindow {
 		initDeleteBtn();
 	}
 	
-	private void initLeftPart() {
+	private void initLeftPart() {		
 		String[] columnNames = {"Course", "Grade", "Credits"};
 		Object[][] data = null;
 		DefaultTableModel model = new DefaultTableModel(data, columnNames);
 		table = new JTable(model);
-		table.setFont(new Font("Monaco", Font.PLAIN, 12));
-		table.setBounds(50, 80, 240, 150);
-		frame.getContentPane().add(table);
+		table.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
+		
+		JScrollPane jsp = new JScrollPane(table, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		jsp.setBounds(50, 80, 240, 150);
+		frame.getContentPane().add(jsp);
 	}
 	
 	private void initRightPart() {
@@ -102,6 +113,7 @@ public class MainWindow {
 		
 		final String INIT_RESULT = "0.0";
 		lblResult = new JLabel(INIT_RESULT);
+		lblResult.setToolTipText("Your GPA!");
 		lblResult.setBounds(110, 240, 60, 20);
 		frame.getContentPane().add(lblResult);
 		
@@ -116,70 +128,73 @@ public class MainWindow {
 	
 	// START --> TOP PART
 	private void initDialog() {
-		final String WELCOME = "Please create course records:";
 		lblDialog = new JLabel(WELCOME);
-		lblDialog.setBounds(50, 20, 185, 20);
+		lblDialog.setFont(new Font("Lucida Grande", Font.PLAIN, 13));
+		lblDialog.setBounds(50, 10, 250, 20);
 		frame.getContentPane().add(lblDialog);
 	}
 	
 	private void initTextInput() {
-		lblText = new JTextArea();
-		lblText.addMouseListener(new MouseAdapter() {
+		lblText = new JTextField();
+		lblText.addFocusListener(new FocusAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent e) {
+			public void focusGained(FocusEvent e) {
 				final String EXAMPLE = "Example: CPSC121, 80, 4.0";
 				lblDialog.setText(EXAMPLE);
 			}
+			@Override
+			public void focusLost(FocusEvent e) {
+				lblDialog.setText(WELCOME);
+			}
 		});
-		lblText.setBounds(50, 50, 185, 20);
+		lblText.setBackground(Color.WHITE);
+		lblText.setBounds(46, 40, 200, 30);
 		frame.getContentPane().add(lblText);
 	}
 	
 	private void initCreateBtn() {
 		JButton btnCreate = new JButton("create");
+		btnCreate.setToolTipText("Add a table row based on your input.");
 		btnCreate.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				String s = lblText.getText();
-				String[] rowDataRaw = s.split(",");
-				String[] rowData = {"", "", ""};
-				String courseID = rowDataRaw[0].trim();
-				courseID = UBCCourseFactory.validateCourseID(courseID);
-				int grade = Integer.parseInt(rowDataRaw[1].trim());
-				grade = UBCCourseFactory.validateGrade(grade);
-				double credits = Double.parseDouble(rowDataRaw[2].trim());
-				credits = UBCCourseFactory.validateCredits(credits);
-				rowData[0] = courseID;
-				rowData[1] = String.valueOf(grade);
-				rowData[2] = String.format("%.1f", credits);
-				DefaultTableModel model = (DefaultTableModel) table.getModel();
-				model.addRow(rowData);
+				String s = lblText.getText().trim();
+				if (!s.isEmpty()) {
+					String[] rowData = {"", "", ""};
+					if (InputParser.parse(s, rowData, ",") || InputParser.parse(s, rowData, " ")) {
+						DefaultTableModel model = (DefaultTableModel) table.getModel();
+						model.addRow(rowData);
+					} else {
+						System.out.println("invalid input");
+					}
+				}
 			}
 		});
-		btnCreate.setBounds(240, 45, 80, 30);
+		btnCreate.setBounds(250, 40, 80, 30);
 		frame.getContentPane().add(btnCreate);
 	}
 	
 	private void initDeleteBtn() {
 		JButton btnDelete = new JButton("delete");
+		btnDelete.setToolTipText("Delete selected row(s) from table.");
 		btnDelete.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				int[] selectedRows = table.getSelectedRows();
 				DefaultTableModel model = (DefaultTableModel) table.getModel();
-				for (int i = 0; i < selectedRows.length; i++) {
+				for (int i = selectedRows.length-1; i >= 0; i--) {
 					model.removeRow(selectedRows[i]);
 				}
 			}
 		});
-		btnDelete.setBounds(320, 45, 80, 30);
+		btnDelete.setBounds(330, 40, 80, 30);
 		frame.getContentPane().add(btnDelete);
 	}
 	// END --> TOP PART
 	
 	// START --> RIGHT PART
 	private void initHeader() {
-		JLabel lblGpaScale = new JLabel("GPA Scale");
+		JLabel lblGpaScale = new JLabel("   GPA  Scale");
 		lblGpaScale.setBounds(320, 80, 100, 30);
 		frame.getContentPane().add(lblGpaScale);
 	}
@@ -258,6 +273,7 @@ public class MainWindow {
 	
 	private void initCalculate() {
 		JButton btnCalculate = new JButton("calculate");
+		btnCalculate.setToolTipText("Calculate GPA using data from the table.");
 		btnCalculate.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {

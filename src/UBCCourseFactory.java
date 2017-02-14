@@ -41,6 +41,8 @@ public class UBCCourseFactory {
     		System.out.println("invalid grade");
     		System.out.println("reset grade to 0");
     		grade = 0;
+    	} else if (grade < 50) {
+    		System.out.println("course failed");
     	}
     	return grade;
     }
