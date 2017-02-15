@@ -20,6 +20,8 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
 public class MainWindow {
+	private static final String FONT_NAME = "Courier";
+	
     private GPACalculator gpaCalculator = new GPACalculator();
     private JFrame frame;
     // top part
@@ -31,10 +33,6 @@ public class MainWindow {
     private JTable table;
     // right part
     private ButtonGroup scaleGroup;
-    // bottom part
-    private JLabel lblScale;
-    private JLabel lblResult;
-    private static final String DEFAULT_LBL_RESULT = "0.0";
 
     /**
      * Launch the application.
@@ -87,7 +85,6 @@ public class MainWindow {
     }
     
     private void initBottomPart() {
-        initResultDisplay();
         initCalculate();
     }
     
@@ -105,15 +102,15 @@ public class MainWindow {
     // START --> TOP PART
     private void initDialog() {
         lblDialog = new JLabel(WELCOME);
-        lblDialog.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
-        lblDialog.setBounds(40, 10, 320, 20);
+        lblDialog.setFont(new Font("Courier", Font.PLAIN, 11));
+        lblDialog.setBounds(10, 10, 430, 20);
         frame.getContentPane().add(lblDialog);
     }
     
     private void initTextInput() {
         lblText = new JTextField();
         lblText.setToolTipText("Input your text here");
-        lblText.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
+        lblText.setFont(new Font(FONT_NAME, Font.PLAIN, 12));
         lblText.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -126,38 +123,39 @@ public class MainWindow {
             }
         });
         lblText.setBackground(Color.WHITE);
-        lblText.setBounds(36, 40, 200, 26);
+        lblText.setBounds(17, 40, 233, 24);
         frame.getContentPane().add(lblText);
     }
     
     private void initCreateBtn() {
         JButton btnCreate = new JButton("create");
-        btnCreate.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
-        btnCreate.setToolTipText("Add a table row based on your input.");
+        btnCreate.setFont(new Font(FONT_NAME, Font.PLAIN, 12));
+        btnCreate.setToolTipText("Add a table row based on input");
         btnCreate.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 String s = lblText.getText().trim();
                 if (!s.isEmpty()) {
-                    String[] rowData = {"", "", ""};
-                    if (InputParser.parse(s, rowData, ",") || InputParser.parse(s, rowData, " ")) {
-                        DefaultTableModel model = (DefaultTableModel) table.getModel();
-                        model.addRow(rowData);
-                    } else {
-                        final String INVALID_INPUT = "Oops, this input is invalid.";
-                        lblDialog.setText(INVALID_INPUT);
-                    }
+                	try {
+                		String[] rowData = {"", "", ""};
+                		if (InputParser.parse(s, rowData, ",") || InputParser.parse(s, rowData, " ")) {
+                			DefaultTableModel model = (DefaultTableModel) table.getModel();
+                			model.addRow(rowData);
+                		}
+                	} catch (InvalidInputException iie) {
+                		lblDialog.setText(iie.getMessage());
+                	}
                 }
             }
         });
-        btnCreate.setBounds(250, 40, 68, 26);
+        btnCreate.setBounds(250, 40, 70, 26);
         frame.getContentPane().add(btnCreate);
     }
     
     private void initDeleteBtn() {
         JButton btnDelete = new JButton("delete");
-        btnDelete.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
-        btnDelete.setToolTipText("Delete selected row(s) from table.");
+        btnDelete.setFont(new Font(FONT_NAME, Font.PLAIN, 12));
+        btnDelete.setToolTipText("Delete selected row(s) from table");
         btnDelete.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -168,7 +166,7 @@ public class MainWindow {
                 }
             }
         });
-        btnDelete.setBounds(310, 40, 68, 26);
+        btnDelete.setBounds(310, 40, 70, 26);
         frame.getContentPane().add(btnDelete);
     }
     // END --> TOP PART
@@ -186,18 +184,19 @@ public class MainWindow {
                 lblDialog.setText("Edit your records in the table");
             }
         });
-        table.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
+        table.setFont(new Font(FONT_NAME, Font.PLAIN, 12));
         
         JScrollPane jsp = new JScrollPane(table, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        jsp.setBounds(40, 80, 260, 165);
+        jsp.setBounds(20, 80, 280, 180);
         frame.getContentPane().add(jsp);
     }
     // END --> LEFT PART
     
     // START --> RIGHT PART
     private void initHeader() {
-        JLabel lblGpaScale = new JLabel("GPA  Scale");
-        lblGpaScale.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
+        JLabel lblGpaScale = new JLabel("Scale");
+        lblGpaScale.setToolTipText("GPA Scale");
+        lblGpaScale.setFont(new Font(FONT_NAME, Font.PLAIN, 12));
         lblGpaScale.setBounds(325, 80, 65, 26);
         frame.getContentPane().add(lblGpaScale);
     }
@@ -213,14 +212,12 @@ public class MainWindow {
     private void initRadioBtn100() {
         JRadioButton radioBtn100 = new JRadioButton("100", true);
         radioBtn100.setToolTipText("GPA calculation based on a scale of 100");
-        radioBtn100.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
+        radioBtn100.setFont(new Font(FONT_NAME, Font.PLAIN, 12));
         radioBtn100.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 scaleGroup.setSelected(radioBtn100.getModel(), true);
-                lblScale.setText("100");
                 gpaCalculator.setScale(GPACalculator.DEFAULT_SCALE);
-                lblResult.setText(DEFAULT_LBL_RESULT);
                 lblDialog.setText(SCALE_CHANGE);
             }
         });
@@ -230,16 +227,14 @@ public class MainWindow {
     }
     
     private void initRadioBtn40L() {
-        JRadioButton radioBtn40L = new JRadioButton("4.0 (Letter)", false);
-        radioBtn40L.setToolTipText("GPA calculation based on your letter grade");
-        radioBtn40L.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
+        JRadioButton radioBtn40L = new JRadioButton("4.0 (L)", false);
+        radioBtn40L.setToolTipText("Letter-based GPA calculation");
+        radioBtn40L.setFont(new Font(FONT_NAME, Font.PLAIN, 12));
         radioBtn40L.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 scaleGroup.setSelected(radioBtn40L.getModel(), true);
-                lblScale.setText("4.0");
                 gpaCalculator.setScale(GPACalculator.SCALE40L);
-                lblResult.setText(DEFAULT_LBL_RESULT);
                 lblDialog.setText(SCALE_CHANGE);
             }
         });
@@ -251,14 +246,12 @@ public class MainWindow {
     private void initRadioBtn433() {
         JRadioButton radioBtn433 = new JRadioButton("4.33", false);
         radioBtn433.setToolTipText("GPA Calculation based on a scale of 4.33");
-        radioBtn433.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
+        radioBtn433.setFont(new Font(FONT_NAME, Font.PLAIN, 12));
         radioBtn433.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 scaleGroup.setSelected(radioBtn433.getModel(), true);
-                lblScale.setText("4.33");
                 gpaCalculator.setScale(GPACalculator.SCALE433);
-                lblResult.setText(DEFAULT_LBL_RESULT);
                 lblDialog.setText(SCALE_CHANGE);
             }
         });
@@ -268,16 +261,14 @@ public class MainWindow {
     }
     
     private void initRadioBtn40() {
-        JRadioButton radioBtn40 = new JRadioButton("4.0 (Grade)", false);
-        radioBtn40.setToolTipText("GPA calculation based on a scale of 4.0");
-        radioBtn40.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
+        JRadioButton radioBtn40 = new JRadioButton("4.0 (S)", false);
+        radioBtn40.setToolTipText("Score-based GPA calculation");
+        radioBtn40.setFont(new Font(FONT_NAME, Font.PLAIN, 12));
         radioBtn40.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 scaleGroup.setSelected(radioBtn40.getModel(), true);
-                lblScale.setText("4.0");
                 gpaCalculator.setScale(GPACalculator.SCALE40);
-                lblResult.setText(DEFAULT_LBL_RESULT);
                 lblDialog.setText(SCALE_CHANGE);
             }
         });
@@ -288,48 +279,9 @@ public class MainWindow {
     // END --> RIGHT PART
     
     // START --> BOTTOM PART
-    private void initResultDisplay() {
-        // "GPA:", "result", "/", "scale"
-        initLblGpa();
-        initLblResult();
-        initLblDiv();   
-        initLblScale();
-    }
-    
-    private void initLblGpa() {
-        JLabel lblGpa = new JLabel("GPA:");
-        lblGpa.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
-        lblGpa.setBounds(50, 250, 60, 20);
-        frame.getContentPane().add(lblGpa);
-    }
-    
-    private void initLblResult() {
-        final String INIT_RESULT = "0.0";
-        lblResult = new JLabel(INIT_RESULT);
-        lblResult.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
-        lblResult.setToolTipText("Your GPA!");
-        lblResult.setBounds(110, 250, 60, 20);
-        frame.getContentPane().add(lblResult);
-    }
-    
-    private void initLblDiv() {
-        JLabel lblDiv = new JLabel(" /    ");
-        lblDiv.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
-        lblDiv.setBounds(170, 250, 60, 20);
-        frame.getContentPane().add(lblDiv);
-    }
-    
-    private void initLblScale() {
-        lblScale = new JLabel("100");
-        lblScale.setToolTipText("The chosen GPA scale");
-        lblScale.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
-        lblScale.setBounds(230, 250, 60, 20);
-        frame.getContentPane().add(lblScale);
-    }
-    
     private void initCalculate() {
         JButton btnCalculate = new JButton("calculate");
-        btnCalculate.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
+        btnCalculate.setFont(new Font(FONT_NAME, Font.PLAIN, 12));
         btnCalculate.setToolTipText("Calculate GPA using data from the table.");
         btnCalculate.addMouseListener(new MouseAdapter() {
             @Override
@@ -340,7 +292,7 @@ public class MainWindow {
                 renderResult(gpa);
             }
         });
-        btnCalculate.setBounds(320, 220, 78, 26);
+        btnCalculate.setBounds(320, 210, 92, 26);
         frame.getContentPane().add(btnCalculate);
     }
     // END --> BOTTOM PART
@@ -372,10 +324,15 @@ public class MainWindow {
     }
     
     private void renderResult(double gpa) {
+    	String gpaStr = "";
+    	String scaleStr = "";
         if (gpaCalculator.getScale() != GPACalculator.SCALE433) {
-            lblResult.setText(String.format("%.1f", gpa));
+            gpaStr = String.format("%.1f", gpa);
+            scaleStr = String.format("%.1f", gpaCalculator.getScale());
         } else {
-            lblResult.setText(String.format("%.2f", gpa));
+            gpaStr = String.format("%.2f", gpa);
+            scaleStr = String.format("%.2f", gpaCalculator.getScale());
         }
+        lblDialog.setText("Your GPA is " + gpaStr + " / " + scaleStr);
     }
 }

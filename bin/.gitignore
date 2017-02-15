@@ -11,3 +11,4 @@
 /InputParser.class
 /GPACalculator$SupportedScales.class
 /GPACalculator$SupportedScale.class
+/InvalidInputException.class

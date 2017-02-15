@@ -1,10 +1,9 @@
 public class UBCCourseFactory {
     private static final int COURSE_DOMAIN_LENGTH = 4;
+    private static final String COURSE_FAILED = "Failed course cannot be used to calculate GPA";
 
-    public static String validateCourseID(String courseID) {
-        if (courseID.length() < 7) {
-            msgInvalidCourseID("length too short");
-        } else {
+    public static String validateCourseID(String courseID) throws InvalidInputException {
+        if (courseID.length() > 6) {
             String courseDomain = courseID.substring(0, COURSE_DOMAIN_LENGTH);
             courseDomain = validateCourseDomain(courseDomain);
             
@@ -12,21 +11,23 @@ public class UBCCourseFactory {
             courseNumber = validateCourseNumber(courseNumber);
             
             courseID = courseDomain + ' ' + courseNumber;
+        } else {
+        	throw new InvalidInputException("courseID=" + courseID);
         }
         return courseID;
     }
 
-    private static String validateCourseDomain(String courseDomain) {
+    private static String validateCourseDomain(String courseDomain) throws InvalidInputException {
         courseDomain = courseDomain.toUpperCase();
         for (int i = 0; i < courseDomain.length(); i++) {
             if (!Character.isLetter(courseDomain.charAt(i))) {
-                msgInvalidCourseID("courseDomain=" + "courseDomain");
+                throw new InvalidInputException("courseDomain=" + courseDomain);
             }
         }
         return courseDomain;
     }
     
-    private static String validateCourseNumber(String courseNumber) {
+    private static String validateCourseNumber(String courseNumber) throws InvalidInputException {
         String result = "";
         for (int i = 0; i < courseNumber.length(); i++) {
             char c = courseNumber.charAt(i);
@@ -35,31 +36,27 @@ public class UBCCourseFactory {
             }
         }
         if (result.compareTo("000") < 0 || result.compareTo("999") > 0) {
-            msgInvalidCourseID("courseNumer=" + result);
+            throw new InvalidInputException("courseNumber=" + courseNumber);
+        }
+        char last = courseNumber.charAt(courseNumber.length()-1);
+        if (Character.isLetter(last)) {
+        	result = result + Character.toUpperCase(last);
         }
         return result;
     }
     
-    private static void msgInvalidCourseID(String s) {
-        System.out.println("invalid course ID: " + s);
-    }
-    
-    public static int validateGrade(int grade) {
+    public static int validateGrade(int grade) throws InvalidInputException {
         if (grade < 0 || grade > 100) {
-            System.out.println("invalid grade");
-            System.out.println("reset grade to 0");
-            grade = 0;
+            throw new InvalidInputException("grade=" + grade);
         } else if (grade < 50) {
-            System.out.println("course failed");
+            throw new InvalidInputException(COURSE_FAILED);
         }
         return grade;
     }
     
-    public static double validateCredits(double credits) {
+    public static double validateCredits(double credits) throws InvalidInputException {
         if (credits < 0.0 || credits > 10.0) {
-            System.out.println("invalid credits: " + credits);
-            System.out.println("reset credits to 0.0");
-            credits = 0.0;
+            throw new InvalidInputException("invalid credits: " + credits);
         }
         return credits;
     }
