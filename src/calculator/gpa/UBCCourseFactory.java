@@ -1,3 +1,5 @@
+package calculator.gpa;
+
 public class UBCCourseFactory {
     private static final int COURSE_DOMAIN_LENGTH = 4;
     private static final String COURSE_FAILED = "Failed course cannot be used to calculate GPA";

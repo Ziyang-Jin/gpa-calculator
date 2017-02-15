@@ -1,3 +1,5 @@
+package calculator.gpa;
+
 public class InputParser {
     public static boolean parse(String input, String[] result, String splitter) throws InvalidInputException {
         String[] rowDataRaw = input.split(splitter);

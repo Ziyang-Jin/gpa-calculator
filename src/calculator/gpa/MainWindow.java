@@ -1,3 +1,5 @@
+package calculator.gpa;
+
 import java.util.Vector;
 
 import javax.swing.JFrame;

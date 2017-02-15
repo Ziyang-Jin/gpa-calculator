@@ -1,3 +1,4 @@
+package calculator.gpa;
 
 public class InvalidInputException extends Exception {
     /**

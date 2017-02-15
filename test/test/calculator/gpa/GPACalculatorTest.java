@@ -1,8 +1,13 @@
+package test.calculator.gpa;
+
 import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import calculator.gpa.Course;
+import calculator.gpa.GPACalculator;
 
 public class GPACalculatorTest {
     private static final String TESTMSG = "Test GPA on a scale of ";

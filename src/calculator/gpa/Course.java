@@ -1,3 +1,5 @@
+package calculator.gpa;
+
 public class Course {
     private String courseID;
     private int grade;
